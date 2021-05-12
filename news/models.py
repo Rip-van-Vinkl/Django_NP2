@@ -10,9 +10,6 @@ class Author(models.Model):
     class Meta:
         verbose_name = 'Автор'
         verbose_name_plural = 'Авторы'
-    
-    def __str__(self):
-        return self.author
 
 
     def update_rating(self):
@@ -27,11 +24,11 @@ class Author(models.Model):
         for comment in Comment.objects.filter(user=self.author):
             author_comments_sum_rating += comment.comment_rating
 
-        author_posts_comments_sum_rating = 0
-        for authorPostsRating in Comment.objects.filter(post=author_posts.id):
-            author_posts_comments_sum_rating += authorPostsRating
+#        author_posts_comments_sum_rating = 0
+#        for authorPostsRating in Comment.objects.filter(?????):
+#            author_posts_comments_sum_rating += authorPostsRating
 
-        self.author_rating = author_posts_sum_rating + author_comments_sum_rating + author_posts_comments_sum_rating
+        self.author_rating = author_posts_sum_rating + author_comments_sum_rating # + author_posts_comments_sum_rating
         self.save()
 
 class Category(models.Model):
@@ -41,10 +38,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-    
-    def __str__(self):
-        return self.category
-
 
 class Post(models.Model):
     
@@ -82,10 +75,9 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
-    
-    def __str__(self):
-        return self.post
 
+    def __str__(self):
+        return f'{self.name.title()}: {self.description[:20]}'
 
 class PostCategory(models.Model):
     
@@ -113,6 +105,3 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-    
-    def __str__(self):
-        return self.post

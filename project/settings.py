@@ -48,11 +48,7 @@ INSTALLED_APPS = [
     'fpages',
     'news',
     'project',
-
-
-
-
-
+    'simpleapp',
 ]
 
 SITE_ID = 1

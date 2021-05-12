@@ -1,5 +1,5 @@
 from django.contrib import admin
-from news.models import Author, Category, Post, PostCategory, Comment
+from .models import Author, Category, Post, PostCategory, Comment
 
 # Register your models here.
 
