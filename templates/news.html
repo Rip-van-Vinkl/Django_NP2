@@ -1,0 +1,128 @@
+
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'default.html' %} 
+
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+ 
+<!-- Название у нас будет News -->
+{% block title %}
+news
+{% endblock title %}
+
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+<h4>Текущая дата: {{ time_now|date:'M d Y' }}</h4>
+<hr>
+<h1>Все новости</h1>
+<hr>
+<p>Всего публикаций: {{ post_count }}</p>
+<hr>
+{% if news %}
+
+    <table>
+        <tr>
+
+            <td>
+                <b>Заголовок</b> 
+            </td>
+            <td>
+                <b>Дата публикации</b>
+            </td>
+            <td>
+                <b>Текст новости</b>
+            </td>
+
+            <td>
+                <b>Подробно</b>
+            </td>
+            
+            <td>
+                <b>Редактирование</b>
+            </td>
+
+            <td>
+                <b>Удаление</b>
+            </td>
+
+        </tr>
+    {% for new in news %} <!-- Для каждого товара будете генерироваться новая строчка, т.е. новый html код. При этом сам цикл работет точно также, как и в python. product — переменная цикла, т.е. наш товар взятый из общего списка -->
+        <tr>
+
+            <td>
+                {{ new.post_title|censor }} <!-- не забываем что переменные в шаблоне ничем не отличаются от переменных в python. Здесь также можно получать доступ к полям класса. Например здесь мы выводим имя, в следующем столбце описание, и т.д.  -->
+            </td>
+            <td>
+                {{ new.post_datetime|date:'M d Y' }}
+            </td>
+            <td>
+                {{ new.post_text|truncatewords:20|censor }}
+            </td>
+
+            <td><a href="/news/{{ new.pk }}">Читать</a></td>
+
+            <td>
+                <a href="/news/edit/{{ new.pk }}">Редактировать</a>
+            </td>
+
+            <td>
+                <a href="/news/delete/{{ new.pk }}">Удалить</a>
+            </td>
+
+
+        </tr>
+    {% endfor %}
+    </table>
+
+{% else %}
+    <h2>Нет новостей...</h2>
+{% endif %}
+
+<!-- Проверяем что поддерживается постраничный вывод -->
+{% if is_paginated %}
+ 
+    <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+    {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+    {% endif %}
+ 
+    <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a>{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+ 
+    <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">>>></a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+ 
+{% endif %}
+<hr>
+
+<h3>Ссылка на страницу ПОИСКА постов: <a href="/news/search">Перейти</a></h3>
+<hr>
+<h3>Ссылка на страницу ДОБАВЛЕНИЯ постов: <a href="/news/add">Перейти</a></h3>
+<hr>
+
+<!--<h3>Ссылка на страницу УДАЛЕНИЯ постов: <a href="/news/delete/1">Перейти</a></h3>
+<hr>
+<h3>Ссылка на страницу РЕДАКТИРОВАНИЯ постов: <a href="/news/detail/1">Перейти</a></h3>
+<hr>
+ -->
+
+<!--
+<h3>Добавить публикацию</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Добавить">
+</form>
+ -->
+
+{% endblock content %}

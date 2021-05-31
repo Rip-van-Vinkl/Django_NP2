@@ -1,0 +1,46 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}Поиск по публикациям{% endblock title %}
+
+{% block content %}
+
+<h1>Поиск по публикациям</h1>
+
+<form method="GET">
+    {{ filter.form }}
+    <input type="submit" value="Найти" class="btn btn-outline-dark">
+</form>
+<br>
+
+<p>Всего найдено: {{ filter.qs|length }}</p>
+
+{% if filter.qs %}
+
+<table>
+    <tr>
+        <td>Заголовок</td>
+        <td>Дата публикации</td>
+        <td>Текст</td>
+        <td>Ссылка на публикацию</td>
+    </tr>
+    {% for new in filter.qs %}
+    <tr>
+        <td>{{ new.post_title|censor }}</td>
+        <td>{{ new.post_datetime|date:'d.m.y h:m' }}</td>
+        <td>{{ new.post_text|truncatewords:20|censor }}</td>
+        <td><a href="/news/{{ new.pk }}">Перейти</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<h4>Публикаций не найдено</h4>
+{% endif %}
+
+
+<hr>
+<h3>Ссылка на страницу Всех новостей: <a href="/news">Перейти</a></h3>
+
+{% endblock content %}

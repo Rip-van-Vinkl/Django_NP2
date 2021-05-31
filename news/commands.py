@@ -40,8 +40,7 @@ comment4 = Comment.objects.get(id=4)
 Создание статьи должно быть таким:
 article1 = Post.objects.create(author=author1, post_type='AR', post_title='Заголовок1', post_text='Текст1',)
 А затем:
-# article1 .PostCategory.add(category1, category2) - что-то не работает
-article1.category.add(category1, category2)  - это работает :)
+article1.category.add(category1, category2)
 
 Создание новости
 new1 = Post.objects.create(author=author2, post_type='NW', post_title='Заголовок новости1', post_text='Текст новости1',)

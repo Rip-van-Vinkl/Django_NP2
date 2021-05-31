@@ -14,6 +14,18 @@
  
   <!-- Bootstrap core CSS -->
   <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <style type="text/css">
+    TABLE {
+     background: rgb(250, 250, 250); /* Цвет фона таблицы */
+     border: 5px double #000; /* Рамка вокруг таблицы */
+    }
+    TD, TH {
+     padding: 5px; /* Поля вокруг текста */
+     border: 1px solid rgb(50, 50, 50); /* Рамка вокруг ячеек */
+    }
+   </style>
+
  
 </head>
  
@@ -48,6 +60,12 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
+
+
+        {% block title %}
+        
+        {% endblock title %}
+
 
         {% block content %}
 

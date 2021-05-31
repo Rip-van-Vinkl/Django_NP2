@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Author(models.Model):
     
     author = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Имя автора')
@@ -39,8 +38,12 @@ class Category(models.Model):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
+    def __str__(self):
+        return f'{self.category}'
+
 class Post(models.Model):
-    
+
+
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category, through='PostCategory')
 
@@ -69,16 +72,19 @@ class Post(models.Model):
         self.save()
 
     def preview(self):
-        return str(self.post_text[0:125], '...')
+        return str(self.post_text[125], '...')
+
+    def __str__(self):
+        return f'{self.post_title.title()} - {self.post_text[:50]} ...'
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/news/{self.id}' 
 
 
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
-
-    def __str__(self):
-        return f'{self.name.title()}: {self.description[:20]}'
-
+        
 class PostCategory(models.Model):
     
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

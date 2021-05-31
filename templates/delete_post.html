@@ -1,0 +1,33 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'default.html' %} 
+
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+{% block title %} <h3></h3> {% endblock title %}
+<hr>
+
+
+{% block content %}
+
+<h3>Удалить публикацию?</h3>
+
+<table>
+    <tr>
+        <td>Заголовок</td>
+        <td>Дата публикации</td>
+        <td>Текст</td>
+    </tr>
+    <tr>
+        <td>{{ new.post_title|censor }}</td>
+        <td>{{ new.post_datetime|date:'d.m.y h:m' }}</td>
+        <td>{{ new.post_text|truncatewords:20|censor }}</td>
+    </tr>
+</table>
+
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-danger" value="Подтвердить удаление">
+</form>
+
+{% endblock content %}

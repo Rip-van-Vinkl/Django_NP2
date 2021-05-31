@@ -1,0 +1,20 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'default.html' %} 
+
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+
+{% block title %} <h3> Добавить публикацию </h3> {% endblock title %}
+<hr>
+
+{% block content %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Добавить">
+</form>
+
+<hr>
+<h3>Ссылка на страницу Всех новостей: <a href="/news">Перейти</a></h3>
+
+{% endblock content %}

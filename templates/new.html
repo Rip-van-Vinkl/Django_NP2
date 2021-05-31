@@ -1,0 +1,30 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'default.html' %} 
+
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+ 
+<!-- Название у нас будет News -->
+{% block title %}
+news
+{% endblock title %}
+ 
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+
+
+
+<h1>Конкретная новость</h1>
+<h4>Дата и время создания: {{ new.post_datetime }}</h4>
+<br>
+<h3>{{ new.post_title|censor }}</h3>
+<br>
+{{ new.post_text|censor }}
+
+<hr>
+<a href="/news/edit/{{ new.pk }}" class='text-decoration-none'><button class="btn btn-dark" type="button">Редактировать</button></a>
+<a href="/news/delete/{{ new.pk }}" class='text-decoration-none'><button class="btn btn-warning" type="button">Удалить</button></a>
+
+<hr>
+<h3>Ссылка на страницу Всех новостей: <a href="/news">Перейти</a></h3>
+
+{% endblock content %}
