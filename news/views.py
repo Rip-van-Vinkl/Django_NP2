@@ -1,15 +1,25 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 from .models import Post, Category
 from .filters import PostFilter
-from .forms import PostForm # импортируем нашу форму
+from .forms import PostForm, UserForm
+
 
 from django.core.paginator import Paginator
 
 import datetime
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
+from django.contrib.auth.models import User, Group
+
+
+from django.views.generic.edit import CreateView
+from .forms import BaseRegisterForm
 
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -63,24 +73,25 @@ class PostDetail(DetailView):
     template_name = 'new.html'  # название шаблона будет product.html
     context_object_name = 'new'  # название объекта. в нём будет
 
+# дженерик для удаления новости
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post')
+    template_name = 'delete_post.html'
+    queryset = Post.objects.all()
+    success_url = '/news/'
+    context_object_name = 'new'
 
-# дженерик для получения деталей о товаре
-# class ProductDetailView(DetailView):
-#    template_name = 'sample_app/product_detail.html'
-#    queryset = Product.objects.all()
-
-
-
-# дженерик для создания объекта. Надо указать только имя шаблона и класс формы, который мы написали в прошлом юните. Остальное он сделает за вас
-class PostCreateView(CreateView):
-    # permission_required = ('NewsPaper.add_post')
+# дженерик для создания объекта.
+# Надо указать только имя шаблона и класс формы, который мы написали в прошлом юните.
+# Остальное он сделает за вас
+class PostCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post')
     template_name = 'add_post.html'
     form_class = PostForm
 
-
 # дженерик для редактирования объекта
-class PostUpdateView(UpdateView):
-    # permission_required = ('NewsPaper.edit_post')
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.add_post')
     template_name = 'add_post.html'
     form_class = PostForm
 
@@ -89,11 +100,31 @@ class PostUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
 
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'login.html'
+    form_class = UserForm
+
+    def get_object(self, **kwargs):
+        id = self.request.user.id
+        return User.objects.get(pk=id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_author'] = not self.request.user.groups.filter(name = 'authors').exists()
+        return context
 
 
-# дженерик для удаления товара
-class PostDeleteView(DeleteView):
-    template_name = 'delete_post.html'
-    queryset = Post.objects.all()
-    success_url = '/news/'
-    context_object_name = 'new'  # название объекта. в нём будет
+@login_required
+def upgrade_me(request):
+    user = request.user
+    authors = Group.objects.get(name='authors')
+    if not request.user.groups.filter(name='authors').exists():
+        authors.user_set.add(user)
+    return redirect('/')
+
+class BaseRegisterView(CreateView):
+    model = User
+    form_class = BaseRegisterForm
+    success_url = '/'
+
+

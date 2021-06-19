@@ -15,9 +15,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.views import LoginView, LogoutView
+
+from news.views import BaseRegisterView
+
+from news.views import upgrade_me
+
+from django.views.generic import RedirectView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('news/', include('news.urls')), # делаем так, чтобы все адреса из нашего приложения (news/urls.py) сами автоматически подключались когда мы их добавим.
+    path('news/search', include('news.urls')),
+
+    # мы также добавили перенаправление корневой страницы в приложение protect
+    path('', include('protect.urls')),
+
+    path('login/', LoginView.as_view(template_name = 'login.html'), name='login'),
+    
+    path('logout/', LogoutView.as_view(template_name = 'logout.html'), name='logout'),
+
+    path('signup/', BaseRegisterView.as_view(template_name = 'signup.html'), name='signup'),
+
+    path('accounts/', include('allauth.urls')),
+    
+    path('index/upgrade/', upgrade_me, name = 'upgrade'),
+
 ]

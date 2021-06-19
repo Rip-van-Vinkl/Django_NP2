@@ -1,0 +1,27 @@
+from django.contrib import admin
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block head_title %}{% endblock head_title %}</title>
+
+        <style type="text/css">
+            TABLE {
+             background: rgb(250, 250, 250); /* Цвет фона таблицы */
+             border: 5px double #000; /* Рамка вокруг таблицы */
+            }
+            TD, TH {
+             padding: 5px; /* Поля вокруг текста */
+             border: 1px solid rgb(50, 50, 50); /* Рамка вокруг ячеек */
+            }
+           </style>
+           
+    </head>
+    <body>
+        {% block body %}
+        {% block content %}
+        {% endblock content %}
+        {% endblock body %}
+        {% block extra_body %}
+        {% endblock extra_body %}
+    </body>
+</html>
